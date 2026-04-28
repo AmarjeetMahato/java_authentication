@@ -1,6 +1,5 @@
 package com.auth.domain.Roles.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -12,13 +11,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RolesDto {
-
-    @NotBlank(message = "Role name is required")
+public class UpdateRoleDto {
     @Size(max = 50, message = "Role name must not exceed 50 characters")
     @Pattern(
             regexp = "^[A-Z_]+$",
-            message = "Role name must be in uppercase and can contain underscores only (e.g. ADMIN, SUPER_ADMIN)"
+            message = "Role name must be uppercase and can contain underscores only"
     )
     private String roleName;
 
