@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(ValidationException ex) {
+    public ResponseEntity<Map<String, String>> HandleValidationExceptions(ValidationException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getErrors());
     }
 
@@ -57,6 +57,17 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND).build();
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ApiErrorResponse> BadRequestException(BadRequestException ex) {
+        String message = ex.getMessage();
+        ApiErrorResponse response = ApiErrorResponse.builder()
+                .message(message)
+                .success(false)
+                .status(HttpStatus.BAD_REQUEST).build();
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
 
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<ApiErrorResponse> ResourceAlreadyExistsException(ConflictException ex) {

@@ -16,4 +16,6 @@ public interface IRolesService {
 
   List<RoleResponseDto> getAllRoles(int limit,int page);
 
+  void deleteRole(String roleId);
+
 }

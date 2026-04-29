@@ -5,7 +5,7 @@ import com.auth.domain.Roles.dto.UpdateRoleDto;
 import com.auth.domain.Roles.entity.Roles;
 import com.auth.domain.Roles.mapper.RoleMapper;
 import com.auth.domain.Roles.repository.RolesRepository;
-import com.auth.globalExceptions.ConflictException;
+import com.auth.globalExceptions.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class RolesServiceImpl implements  IRolesService {
     @Override
     public RoleResponseDto createRole(RolesDto rolesDto) {
              rolesRepository.findByRoleName(rolesDto.getRoleName()).ifPresent(roles -> {
-                         throw new IllegalArgumentException(
+                         throw new ConflictException(
                                  "Role already exists with name: " + rolesDto.getRoleName()
                          );
                      }
@@ -33,6 +33,8 @@ public class RolesServiceImpl implements  IRolesService {
                  return roleMapper.toResponse(saved);
              } catch (DataIntegrityViolationException ex) {
                  throw new ConflictException("Database constraint violation: Role may already exist");
+             } catch (RuntimeException e) {
+                 throw new InternalServerError(e.getMessage());
              }
     }
 
@@ -41,12 +43,12 @@ public class RolesServiceImpl implements  IRolesService {
 
          try{
                 rolesRepository.findById(roleId).orElseThrow(()->
-                        new IllegalArgumentException("Roles Id can't not be null"));
+                        new ResourceNotFoundException("Role Not found"));
                 Roles roles = roleMapper.updateEntity(updateRoleDto);
                 Roles save = rolesRepository.save(roles);
                 return  roleMapper.toResponse(save);
          } catch (RuntimeException e) {
-             throw new RuntimeException(e);
+             throw new InternalServerError(e.getMessage());
          }
     }
 
@@ -63,6 +65,20 @@ public class RolesServiceImpl implements  IRolesService {
     @Override
     public List<RoleResponseDto> getAllRoles(int page, int limit) {
 
+        // ✅ validation
+        if (page < 0) {
+            throw new BadRequestException("Page must be greater than or equal to 0");
+        }
+
+        if (limit <= 0) {
+            throw new BadRequestException("Limit must be greater than 0");
+        }
+
+        if (limit > 100) {
+            throw new BadRequestException("Limit must not exceed 100");
+        }
+
+
         Pageable pageable = PageRequest.of(page, limit);
 
         List<Roles> roles = rolesRepository.findAll(pageable)
@@ -72,4 +88,14 @@ public class RolesServiceImpl implements  IRolesService {
                 .map(roleMapper::toResponse)
                 .toList();
     }
+
+    @Override
+    public void deleteRole(String roleId) {
+        Roles role = rolesRepository.findById(roleId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Role not found with id: " + roleId)
+                );
+        rolesRepository.delete(role);
+    }
+
 }
