@@ -17,7 +17,7 @@ public class DeviceServiceImpl implements  IDeviceService {
 
     @Override
     public DeviceResponseDto registerDevice(DeviceDto dto) {
-
+        return null;
 
     }
 

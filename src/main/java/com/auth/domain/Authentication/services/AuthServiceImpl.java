@@ -11,17 +11,23 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements  IAuthService {
 
-    private UserRepsoitory userRepsoitory;
+    private final UserRepsoitory userRepsoitory;
 
     @Override
-    public void registerUser(RegisterDto registerDto, request HttpRequest) {
+    public void registerUser(RegisterDto registerDto) {
 
-        User exitsingUser = userRepsoitory.findById(registerDto.getEmail())
-                .orElseThrow(() -> new RuntimeException("Email already resister "));
+        // ✅ Check if email already exists
+        if (userRepsoitory.findByEmail(registerDto.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already registered");
+        }
 
+        // ✅ Convert DTO → Entity
+        User user = User.builder()
+                .Email(registerDto.getEmail())
+                .build();
 
-        userRepsoitory.save(registerDto.getEmail());
-
+        // ✅ Save entity (NOT string)
+        userRepsoitory.save(user);
     }
 
     @Override
