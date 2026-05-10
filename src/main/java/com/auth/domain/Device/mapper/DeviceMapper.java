@@ -3,6 +3,8 @@ package com.auth.domain.Device.mapper;
 import com.auth.domain.Device.dto.DeviceDto;
 import com.auth.domain.Device.dto.DeviceResponseDto;
 import com.auth.domain.Device.entity.Device;
+import com.auth.domain.Users.entity.User;
+import com.auth.globalExceptions.BadRequestException;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -11,13 +13,14 @@ import java.time.LocalDateTime;
 public class DeviceMapper {
 
     // DTO → ENTITY
-    public Device toEntity(DeviceDto dto) {
+    public Device toEntity(DeviceDto dto, User user) {
+
         if (dto == null) {
-            throw new IllegalArgumentException("CreateDeviceDto must not be null");
+            throw new IllegalArgumentException("DeviceDto must not be null");
         }
 
         return Device.builder()
-                .userId(dto.getUserId())
+                .user(user)
                 .deviceName(dto.getDeviceName())
                 .deviceType(dto.getDeviceType())
                 .os(dto.getOs())
@@ -31,25 +34,40 @@ public class DeviceMapper {
                 .build();
     }
 
-    // ENTITY → RESPONSE DTO
+//    // ENTITY → RESPONSE DTO
+    /**
+     * ENTITY -> RESPONSE DTO
+     */
     public DeviceResponseDto toResponse(Device device) {
+
         if (device == null) {
-            throw new IllegalArgumentException("Device must not be null");
+            throw new BadRequestException(
+                    "Device must not be null"
+            );
         }
 
         return DeviceResponseDto.builder()
                 .id(device.getId())
-                .userId(device.getUserId())
+
+                // ✅ FIXED
+                .userId(
+                        device.getUser() != null
+                                ? device.getUser().getId()
+                                : null
+                )
+                .deviceId(device.getId())
                 .deviceName(device.getDeviceName())
                 .deviceType(device.getDeviceType())
                 .os(device.getOs())
                 .browser(device.getBrowser())
                 .ipAddress(device.getIpAddress())
+                .userAgent(device.getUserAgent())
                 .isActive(device.getIsActive())
                 .isTrusted(device.getIsTrusted())
                 .isBlocked(device.getIsBlocked())
                 .lastLoginAt(device.getLastLoginAt())
                 .createdAt(device.getCreatedAt())
+                .message("Device fetched successfully")
                 .build();
     }
 

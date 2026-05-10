@@ -8,5 +8,9 @@ public interface ITokenService {
 
     TokenResponseDto createToken(TokenDto tokenDto);
 
-    TokenResponseDto updateToken(TokenUpdateDto updateDto);
+    TokenResponseDto updateToken(String tokenId, TokenUpdateDto updateDto);
+
+    TokenResponseDto getByTokenValue(String tokenValue);
+
+    void revokeToken(String tokenId);
 }

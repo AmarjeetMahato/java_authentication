@@ -1,5 +1,6 @@
 package com.auth.domain.Device.entity;
 
+import com.auth.domain.Users.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -20,10 +21,6 @@ public class Device {
     @Id
     @Column(unique = true, nullable = false, updatable = false)
     private String id;
-
-    // ---------------- USER RELATION ----------------
-    @Column(name = "user_id", nullable = false)
-    private String userId;
 
     // ---------------- DEVICE INFO ----------------
     @Column(name = "device_name", nullable = false)
@@ -72,6 +69,13 @@ public class Device {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+
+    // ---------------- USER RELATION ----------------
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
 
     // ---------------- PRE-PERSIST ----------------
     @PrePersist

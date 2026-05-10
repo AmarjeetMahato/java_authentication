@@ -1,5 +1,6 @@
 package com.auth.domain.Device.dto;
 
+import com.auth.domain.Users.entity.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -13,8 +14,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class DeviceDto {
+
+    @NotBlank(message = "Device ID must not be empty")
+    private String deviceId;
+
     @NotBlank(message = "User ID must not be empty")
-    private String userId;
+    private User userId;
 
     @NotBlank(message = "Device name is required (e.g. Chrome on Windows)")
     @Size(max = 100, message = "Device name must not exceed 100 characters")
