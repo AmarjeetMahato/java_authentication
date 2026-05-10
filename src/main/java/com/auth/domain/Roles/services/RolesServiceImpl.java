@@ -42,10 +42,10 @@ public class RolesServiceImpl implements  IRolesService {
     public RoleResponseDto updateRole(UpdateRoleDto updateRoleDto,String roleId) {
 
          try{
-                rolesRepository.findById(roleId).orElseThrow(()->
+               Roles existing =   rolesRepository.findById(roleId).orElseThrow(()->
                         new ResourceNotFoundException("Role Not found"));
-                Roles roles = roleMapper.updateEntity(updateRoleDto);
-                Roles save = rolesRepository.save(roles);
+                roleMapper.updateEntity(existing,updateRoleDto);
+                Roles save = rolesRepository.save(existing);
                 return  roleMapper.toResponse(save);
          } catch (RuntimeException e) {
              throw new InternalServerError(e.getMessage());
@@ -57,7 +57,7 @@ public class RolesServiceImpl implements  IRolesService {
 
         Roles role = rolesRepository.findById(roleId)
                 .orElseThrow(() ->
-                        new RuntimeException("Role not found with id: " + roleId)
+                        new ResourceNotFoundException("Role not found with id: " + roleId)
                 );
         return roleMapper.toResponse(role);
     }

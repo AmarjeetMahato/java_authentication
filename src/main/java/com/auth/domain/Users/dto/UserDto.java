@@ -1,6 +1,7 @@
 package com.auth.domain.Users.dto;
 
 import com.auth.domain.Users.enums.AuthProviderEnums;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -37,6 +38,9 @@ public class UserDto {
             message = "Gender must be MALE, FEMALE, or OTHER"
     )
     private String gender;
+
+    @Column(name = "is_active", nullable = false)
+    private  boolean isActive;
 
     @Size(max = 500, message = "Profile picture URL too long")
     private String profilePic;

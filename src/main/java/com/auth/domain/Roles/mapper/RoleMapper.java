@@ -21,15 +21,24 @@ public class RoleMapper {
     }
 
 
-    public Roles updateEntity(UpdateRoleDto dto){
+    public void updateEntity(Roles role, UpdateRoleDto dto) {
 
-        if(dto == null) {
-            throw new   IllegalArgumentException("Role Dto must not be null");
+        if (role == null) {
+            throw new IllegalArgumentException("Role entity must not be null");
         }
-        return  Roles.builder()
-                .roleName(dto.getRoleName())
-                .description(dto.getDescription())
-                .build();
+
+        if (dto == null) {
+            throw new IllegalArgumentException("UpdateRoleDto must not be null");
+        }
+
+        // Update only if not null (supports partial update)
+        if (dto.getRoleName() != null) {
+            role.setRoleName(dto.getRoleName());
+        }
+
+        if (dto.getDescription() != null) {
+            role.setDescription(dto.getDescription());
+        }
     }
 
     public RoleResponseDto toResponse(Roles roles){
